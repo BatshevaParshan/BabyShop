@@ -1,0 +1,33 @@
+/* Placeholder styles for Header component */
+
+.header {
+    /* Add styles for the header container */
+    background-color: #f0f0f0;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .logo {
+    /* Add styles for the logo */
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .nav {
+    /* Add styles for the navigation */
+    margin-top: 10px;
+  }
+  
+  .nav-link {
+    /* Add styles for navigation links */
+    margin-right: 10px;
+    color: #666;
+    text-decoration: none;
+  }
+  
+  .nav-link:hover {
+    /* Hover styles for navigation links */
+    color: #000;
+  }
+  
