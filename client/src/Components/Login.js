@@ -16,8 +16,19 @@ const Login = ({ onLogin, isLoggedIn }) => {
     return errors;
   };
 
+  const handleSubmit = async (values, { setSubmitting }) => {
+    // Simulate login with a dummy API call (replace with actual login logic)
+    setTimeout(() => {
+      // Assuming login is successful, set user info and redirect
+      const userData = { user_id: 123, username: 'BabyUser' };
+      onLogin(userData.user_id, userData.username);
+      navigate('/login-success'); // Redirect to successful login page
+      setSubmitting(false);
+    }, 1000); // Simulated delay to mimic API call
+  };
+
   if (isLoggedIn) {
-    // Redirect if user is already logged in
+    // If user is already logged in, redirect to home page
     navigate('/');
     return null;
   }
@@ -28,16 +39,7 @@ const Login = ({ onLogin, isLoggedIn }) => {
       <Formik
         initialValues={{ email: '', password: '' }}
         validate={validate}
-        onSubmit={(values, { setSubmitting }) => {
-          // Simulate login with a dummy API call (replace with actual login logic)
-          setTimeout(() => {
-            // Assuming login is successful, set user info and redirect
-            const userData = { user_id: 123, username: 'BabyUser' };
-            onLogin(userData.user_id, userData.username);
-            navigate('/login-success'); // Redirect to successful login page
-            setSubmitting(false);
-          }, 1000); // Simulated delay to mimic API call
-        }}
+        onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
           <Form>

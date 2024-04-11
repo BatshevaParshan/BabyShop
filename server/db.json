@@ -1,45 +1,19 @@
 {
     "users": [
-      {
-        "id": 1,
-        "username": "john_doe",
-        "email": "john.doe@example.com",
-        "password": "password123"
-      },
-      {
-        "id": 2,
-        "username": "jane_smith",
-        "email": "jane.smith@example.com",
-        "password": "secret456"
-      }
+      { "id": 1, "username": "john_doe", "email": "john@example.com", "password": "password123" },
+      { "id": 2, "username": "jane_smith", "email": "jane@example.com", "password": "abc456" }
     ],
-    "posts": [
-      {
-        "id": 1,
-        "userId": 1,
-        "title": "Hello World",
-        "content": "This is my first post!"
-      },
-      {
-        "id": 2,
-        "userId": 2,
-        "title": "Mock Data",
-        "content": "Using mock data for testing."
-      }
+    "products": [
+      { "id": 1, "name": "Convertible Car Seat", "description": "Safe and comfortable car seat for infants and toddlers.", "price": 149.99, "image_url": "path_to_image1.jpg" },
+      { "id": 2, "name": "Lightweight Stroller", "description": "Easy-to-use stroller for everyday use.", "price": 99.99, "image_url": "path_to_image2.jpg" }
     ],
-    "comments": [
-      {
-        "id": 1,
-        "postId": 1,
-        "userId": 2,
-        "text": "Nice post!"
-      },
-      {
-        "id": 2,
-        "postId": 2,
-        "userId": 1,
-        "text": "Great job!"
-      }
+    "categories": [
+      { "id": 1, "name": "Car Seats" },
+      { "id": 2, "name": "Strollers" }
+    ],
+    "listings": [
+      { "id": 1, "product_id": 1, "seller_id": 1, "price": 139.99, "condition": "Like new", "image_url": "path_to_listing_image1.jpg" },
+      { "id": 2, "product_id": 2, "seller_id": 2, "price": 89.99, "condition": "Used", "image_url": "path_to_listing_image2.jpg" }
     ]
   }
   
