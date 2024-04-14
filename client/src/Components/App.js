@@ -11,7 +11,7 @@ import Cart from './Cart';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem('userId') || localStorage.getItem('username') ? true : false
+    localStorage.getItem('userId') && localStorage.getItem('username') ? true : false
   );
   const [userId, setUserId] = useState(localStorage.getItem('userId') || null);
   const [username, setUsername] = useState(localStorage.getItem('username') || '');
@@ -56,10 +56,40 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<ProductPage />} />
-          <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login onLogin={handleLogin} isLoggedIn={isLoggedIn} />} />
-          <Route path="/signup" element={isLoggedIn ? <Navigate to="/" /> : <Signup onSignup={handleSignUp} isLoggedIn={isLoggedIn} />} />
-          <Route path="/login-success" element={isLoggedIn ? <SuccessfulLogin /> : <Navigate to="/login" />} />
-          <Route path="/user-account" element={isLoggedIn ? <UserAccount isLoggedIn={isLoggedIn} onLogout={handleLogout} userId={userId} /> : <Navigate to="/login" />} />
+          <Route
+            path="/login"
+            element={
+              isLoggedIn ? (
+                <Navigate to="/" />
+              ) : (
+                <Login onLogin={handleLogin} isLoggedIn={isLoggedIn} />
+              )
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              isLoggedIn ? (
+                <Navigate to="/" />
+              ) : (
+                <Signup onSignup={handleSignUp} isLoggedIn={isLoggedIn} />
+              )
+            }
+          />
+          <Route
+            path="/login-success"
+            element={isLoggedIn ? <SuccessfulLogin /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/user-account"
+            element={
+              isLoggedIn ? (
+                <UserAccount isLoggedIn={isLoggedIn} onLogout={handleLogout} userId={userId} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
           <Route path="/cart" element={<Cart />} />
         </Routes>
       </div>

@@ -1,13 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const ProductPage = () => {
-  // You can fetch product data from backend API here
-  // Placeholder product data for demonstration
-  const products = [
-    { id: 1, name: 'Car Seat', price: 99.99, image: 'path_to_image' },
-    { id: 2, name: 'Stroller', price: 149.99, image: 'path_to_image' },
-    { id: 3, name: 'Bassinet', price: 79.99, image: 'path_to_image' },
-  ];
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/products');
+        if (response.ok) {
+          const productsData = await response.json();
+          setProducts(productsData);
+        } else {
+          throw new Error('Failed to fetch products');
+        }
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []); // Empty dependency array to ensure useEffect runs only once
+
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading indicator while fetching data
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>; // Show an error message if fetching fails
+  }
 
   return (
     <div className="product-page-container">
@@ -15,7 +39,7 @@ const ProductPage = () => {
       <div className="product-list">
         {products.map((product) => (
           <div key={product.id} className="product-item">
-            <img src={product.image} alt={product.name} className="product-image" />
+            <img src={product.image_url} alt={product.name} className="product-image" />
             <h3>{product.name}</h3>
             <p>${product.price.toFixed(2)}</p>
           </div>

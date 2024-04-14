@@ -5,26 +5,29 @@ import { useNavigate } from 'react-router-dom';
 const Login = ({ onLogin, isLoggedIn }) => {
   const navigate = useNavigate();
 
-  const validate = values => {
-    const errors = {};
-    if (!values.email) {
-      errors.email = 'Email is required';
-    }
-    if (!values.password) {
-      errors.password = 'Password is required';
-    }
-    return errors;
-  };
-
   const handleSubmit = async (values, { setSubmitting }) => {
-    // Simulate login with a dummy API call (replace with actual login logic)
-    setTimeout(() => {
-      // Assuming login is successful, set user info and redirect
-      const userData = { user_id: 123, username: 'BabyUser' };
-      onLogin(userData.user_id, userData.username);
-      navigate('/login-success'); // Redirect to successful login page
-      setSubmitting(false);
-    }, 1000); // Simulated delay to mimic API call
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        onLogin(userData.user_id, userData.username);
+        navigate('/login-success'); // Redirect to successful login page
+      } else {
+        const errorData = await response.json();
+        console.error('Login failed:', errorData.message);
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+
+    setSubmitting(false);
   };
 
   if (isLoggedIn) {
@@ -38,7 +41,16 @@ const Login = ({ onLogin, isLoggedIn }) => {
       <h2 className="login-heading">Baby Shop Login</h2>
       <Formik
         initialValues={{ email: '', password: '' }}
-        validate={validate}
+        validate={(values) => {
+          const errors = {};
+          if (!values.email) {
+            errors.email = 'Email is required';
+          }
+          if (!values.password) {
+            errors.password = 'Password is required';
+          }
+          return errors;
+        }}
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
