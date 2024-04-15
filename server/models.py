@@ -1,7 +1,15 @@
-from sqlalchemy import Column, Integer, String, Float, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Text, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from config import db
 from sqlalchemy_serializer import SerializerMixin
+
+# Association table for many-to-many relationship
+user_product_association = Table(
+    'user_product_association',
+    db.Model.metadata,
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('product_id', Integer, ForeignKey('products.id'))
+)
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
@@ -14,8 +22,7 @@ class User(db.Model, SerializerMixin):
 
     listings = relationship("Listing", back_populates="seller")
     subscriptions = relationship("Subscription", back_populates="user")
-
-    serialize_rules = ('-password',)  # Exclude password from serialization
+    favorite_products = relationship("Product", secondary=user_product_association, backref="favorited_by")
 
     def __repr__(self):
         return f"<User(id={self.id}, username={self.username}, email={self.email})>"
@@ -35,7 +42,7 @@ class Product(db.Model, SerializerMixin):
     def __repr__(self):
         return f"<Product(id={self.id}, name={self.name}, price={self.price})>"
 
-class Category(db.Model):
+class Category(db.Model,SerializerMixin):
     __tablename__ = 'categories'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -46,7 +53,7 @@ class Category(db.Model):
     def __repr__(self):
         return f"<Category(id={self.id}, name={self.name})>"
 
-class Listing(db.Model):
+class Listing(db.Model, SerializerMixin):
     __tablename__ = 'listings'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -62,7 +69,7 @@ class Listing(db.Model):
     def __repr__(self):
         return f"<Listing(id={self.id}, product_id={self.product_id}, seller_id={self.seller_id})>"
 
-class Subscription(db.Model):
+class Subscription(db.Model,SerializerMixin):
     __tablename__ = 'subscriptions'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
