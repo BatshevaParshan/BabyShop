@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Header from './Header';
 import Home from './Home';
 import ProductPage from './ProductPage';
@@ -53,45 +53,58 @@ const App = () => {
     <Router>
       <div className="app">
         <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<ProductPage />} />
+        <Switch>
+          <Route
+            path="/"
+            exact
+            render={(props) => (
+              <Home {...props} isLoggedIn={isLoggedIn} onLogin={handleLogin} />
+            )}
+          />
+          <Route path="/products" component={ProductPage} />
           <Route
             path="/login"
-            element={
+            render={(props) =>
               isLoggedIn ? (
-                <Navigate to="/" />
+                <Redirect to="/" />
               ) : (
-                <Login onLogin={handleLogin} isLoggedIn={isLoggedIn} />
+                <Login {...props} onLogin={handleLogin} isLoggedIn={isLoggedIn} />
               )
             }
           />
           <Route
             path="/signup"
-            element={
+            render={(props) =>
               isLoggedIn ? (
-                <Navigate to="/" />
+                <Redirect to="/" />
               ) : (
-                <Signup onSignup={handleSignUp} isLoggedIn={isLoggedIn} />
+                <Signup {...props} onSignup={handleSignUp} isLoggedIn={isLoggedIn} />
               )
             }
           />
           <Route
             path="/login-success"
-            element={isLoggedIn ? <SuccessfulLogin /> : <Navigate to="/login" />}
+            render={() =>
+              isLoggedIn ? <SuccessfulLogin /> : <Redirect to="/login" />
+            }
           />
           <Route
             path="/user-account"
-            element={
+            render={(props) =>
               isLoggedIn ? (
-                <UserAccount isLoggedIn={isLoggedIn} onLogout={handleLogout} userId={userId} />
+                <UserAccount
+                  {...props}
+                  isLoggedIn={isLoggedIn}
+                  onLogout={handleLogout}
+                  userId={userId}
+                />
               ) : (
-                <Navigate to="/login" />
+                <Redirect to="/login" />
               )
             }
           />
-          <Route path="/cart" element={<Cart />} />
-        </Routes>
+          <Route path="/cart" component={Cart} />
+        </Switch>
       </div>
     </Router>
   );

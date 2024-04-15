@@ -1,10 +1,10 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import './Signup.css'; // Import CSS for signup page styling
 
 const Signup = ({ onSignup, isLoggedIn }) => {
-  const navigate = useNavigate();
+  const history = useHistory();
 
   const validate = values => {
     const errors = {};
@@ -21,7 +21,7 @@ const Signup = ({ onSignup, isLoggedIn }) => {
   };
 
   if (isLoggedIn) {
-    navigate('/');
+    history.push('/');
     return null; // Redirect to home page if user is already logged in
   }
 
@@ -38,7 +38,7 @@ const Signup = ({ onSignup, isLoggedIn }) => {
       if (response.ok) {
         const userData = await response.json();
         onSignup(userData.user_id, userData.username);
-        navigate('/login-success'); // Redirect to successful signup page
+        history.push('/login-success'); // Redirect to successful signup page
       } else {
         const errorData = await response.json();
         console.error('Signup failed:', errorData.message);

@@ -1,11 +1,11 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 const SuccessfulLogin = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
 
   const handleRedirect = () => {
-    navigate('/baby'); // Redirect to the baby page upon successful login
+    history.push('/baby'); // Redirect to the baby page upon successful login
   };
 
   return (

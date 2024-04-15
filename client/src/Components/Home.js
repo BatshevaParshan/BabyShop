@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Login from './Login'; // Import the Login component
 import './Home.css'; // Import CSS file for styling
 
-const Home = () => {
+const Home = ({ isLoggedIn, onLogin }) => {
   return (
     <div className="home-container">
       <h2 className="welcome-message">Welcome to BabyShop!</h2>
@@ -26,8 +27,12 @@ const Home = () => {
         </div>
       </div>
       <p className="explore-text">Explore our range of baby clothes, accessories, toys, and more!</p>
+      
+      {/* Display the Login component if the user is not logged in */}
+      {!isLoggedIn && <Login onLogin={onLogin} isLoggedIn={isLoggedIn} />}
     </div>
   );
 }
 
 export default Home;
+
