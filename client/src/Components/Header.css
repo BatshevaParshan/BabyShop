@@ -1,33 +1,65 @@
 /* Placeholder styles for Header component */
 
 .header {
-    /* Add styles for the header container */
-    background-color: #f0f0f0;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .logo {
-    /* Add styles for the logo */
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .nav {
-    /* Add styles for the navigation */
-    margin-top: 10px;
-  }
-  
-  .nav-link {
-    /* Add styles for navigation links */
-    margin-right: 10px;
-    color: #666;
-    text-decoration: none;
-  }
-  
-  .nav-link:hover {
-    /* Hover styles for navigation links */
-    color: #000;
-  }
-  
+  /* Add styles for the header container */
+  background-color: #ffffff;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: sans-serif;
+  text-decoration: none;
+  height: 60px;
+}
+
+.logo {
+  /* Add styles for the logo */
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+  list-style: none;
+}
+
+.nav {
+  /* Add styles for the navigation */
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-link {
+  /* Add styles for navigation links */
+  margin-right: 10px;
+  color: #666;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  /* Hover styles for navigation links */
+  color: #000;
+}
+nav ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-right: 10px;
+  text-decoration: none;
+  list-style: none;
+}
+nav ul li {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bolder;
+  color: #000;
+}
+
+nav ul li:hover {
+  border: 2px solid blue;
+}

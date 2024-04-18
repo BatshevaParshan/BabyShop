@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './Header';
 import Home from './Home';
 import ProductPage from './ProductPage';
@@ -9,12 +9,13 @@ import SuccessfulLogin from './SuccessfulLogin';
 import UserAccount from './UserAccount';
 import Cart from './Cart';
 
+
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem('userId') && localStorage.getItem('username') ? true : false
+    localStorage.getItem('user-token') && localStorage.getItem('username') ? true : false
   );
-  const [userId, setUserId] = useState(localStorage.getItem('userId') || null);
   const [username, setUsername] = useState(localStorage.getItem('username') || '');
+  const [cart, setCart] = useState()
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -24,28 +25,28 @@ const App = () => {
     }
   }, [isLoggedIn]);
 
-  const handleLogin = (userIdParam, usernameParam) => {
+  const handleLogin = (userToken, usernameParam) => {
     setIsLoggedIn(true);
-    setUserId(userIdParam);
     setUsername(usernameParam);
-    localStorage.setItem('userId', userIdParam);
+    localStorage.setItem('user-token', userToken);
+    localStorage.setItem("cart", JSON.stringify([]))
     localStorage.setItem('username', usernameParam);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setUserId(null);
     setUsername('');
-    localStorage.removeItem('userId');
+    localStorage.setItem('user-token', "");
     localStorage.removeItem('username');
+    localStorage.removeItem("cart")
     localStorage.removeItem('isLoggedIn');
   };
 
-  const handleSignUp = (userIdParam, usernameParam) => {
+  const handleSignUp = (userToken, usernameParam) => {
     setIsLoggedIn(true);
-    setUserId(userIdParam);
     setUsername(usernameParam);
-    localStorage.setItem('userId', userIdParam);
+    localStorage.setItem('user-token', userToken);
+    localStorage.setItem("cart", JSON.stringify([]))
     localStorage.setItem('username', usernameParam);
   };
 
@@ -53,58 +54,45 @@ const App = () => {
     <Router>
       <div className="app">
         <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
-        <Switch>
-          <Route
-            path="/"
-            exact
-            render={(props) => (
-              <Home {...props} isLoggedIn={isLoggedIn} onLogin={handleLogin} />
-            )}
-          />
-          <Route path="/products" component={ProductPage} />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<ProductPage />} />
           <Route
             path="/login"
-            render={(props) =>
+            element={
               isLoggedIn ? (
-                <Redirect to="/" />
+                <Navigate to="/" />
               ) : (
-                <Login {...props} onLogin={handleLogin} isLoggedIn={isLoggedIn} />
+                <Login onLogin={handleLogin} isLoggedIn={isLoggedIn} />
               )
             }
           />
           <Route
             path="/signup"
-            render={(props) =>
+            element={
               isLoggedIn ? (
-                <Redirect to="/" />
+                <Navigate to="/" />
               ) : (
-                <Signup {...props} onSignup={handleSignUp} isLoggedIn={isLoggedIn} />
+                <Signup onSignup={handleSignUp} isLoggedIn={isLoggedIn} />
               )
             }
           />
           <Route
             path="/login-success"
-            render={() =>
-              isLoggedIn ? <SuccessfulLogin /> : <Redirect to="/login" />
-            }
+            element={isLoggedIn ? <SuccessfulLogin /> : <Navigate to="/login" />}
           />
           <Route
             path="/user-account"
-            render={(props) =>
+            element={
               isLoggedIn ? (
-                <UserAccount
-                  {...props}
-                  isLoggedIn={isLoggedIn}
-                  onLogout={handleLogout}
-                  userId={userId}
-                />
+                <UserAccount isLoggedIn={isLoggedIn} onLogout={handleLogout} userToken={localStorage.getItem("user-token")} />
               ) : (
-                <Redirect to="/login" />
+                <Navigate to="/login" />
               )
             }
           />
-          <Route path="/cart" component={Cart} />
-        </Switch>
+          <Route path="/cart" element={<Cart/>} />
+        </Routes>
       </div>
     </Router>
   );

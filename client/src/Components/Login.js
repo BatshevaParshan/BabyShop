@@ -1,91 +1,92 @@
-import React, { useEffect } from 'react';
-import { useFormik } from 'formik';
-import { useHistory } from 'react-router-dom';
-
+import React from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { useNavigate } from "react-router-dom";
+import "./Login.css";
 const Login = ({ onLogin, isLoggedIn }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
-  const validate = values => {
-    const errors = {};
-    if (!values.email) {
-      errors.email = 'Email is required';
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      const url = "http://127.0.0.1:5000";
+      const response = await fetch(`${url}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (response.ok) {
+        const json = await response.json();
+        const userData = json.user;
+        onLogin(json.user_token, userData.username);
+        window.alert("Login Successful")
+        navigate("/login-success"); // Redirect to successful login page
+      } else {
+        const errorData = await response.json();
+        window.alert(errorData.message);
+        console.error("Login failed:", errorData.message);
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
     }
-    if (!values.password) {
-      errors.password = 'Password is required';
-    }
-    return errors;
+
+    setSubmitting(false);
   };
 
-  const formik = useFormik({
-    initialValues: { email: '', password: '' },
-    validate,
-    onSubmit: async (values, { setSubmitting }) => {
-      try {
-        const response = await fetch('http://localhost:5555/users/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: values.email,
-            password: values.password,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Login failed');
-        }
-
-        const data = await response.json();
-        console.log('Login successful:', data);
-        onLogin(data.user_id, data.username); // Assuming onLogin function is implemented
-        history.push('/login-success'); // Redirect upon successful login using history
-      } catch (error) {
-        console.error('Error during login:', error);
-        alert('Failed to login. Please check your credentials.');
-      } finally {
-        setSubmitting(false);
-      }
-    },
-  });
-
-  // Redirect to home if user is already logged in
-  useEffect(() => {
-    if (isLoggedIn) {
-      history.push('/');
-    }
-  }, [isLoggedIn, history]);
+  if (isLoggedIn) {
+    // If user is already logged in, redirect to home page
+    navigate("/");
+    return null;
+  }
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
-      <form onSubmit={formik.handleSubmit}>
-        <div className="input-group">
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-          />
-          {formik.errors.email && <div className="error-message">{formik.errors.email}</div>}
-        </div>
-        <div className="input-group">
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-          />
-          {formik.errors.password && <div className="error-message">{formik.errors.password}</div>}
-        </div>
-        <button type="submit" disabled={formik.isSubmitting} className="login-button">
-          Login
-        </button>
-      </form>
+      <h2 className="login-heading">Baby Shop Login</h2>
+      <Formik
+        initialValues={{ email: "", password: "" }}
+        validate={(values) => {
+          const errors = {};
+          if (!values.email) {
+            errors.email = "Email is required";
+          }
+          if (!values.password) {
+            errors.password = "Password is required";
+          }
+          return errors;
+        }}
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting }) => (
+          <Form>
+            <div className="input-group">
+              <label htmlFor="email">Email:</label>
+              <Field type="email" name="email" className="input-field" />
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="error-message"
+              />
+            </div>
+            <div className="input-group">
+              <label htmlFor="password">Password:</label>
+              <Field type="password" name="password" className="input-field" />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="error-message"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="login-button"
+            >
+              {isSubmitting ? "Logging in..." : "Login"}
+            </button>
+          </Form>
+        )}
+      </Formik>
     </div>
   );
 };

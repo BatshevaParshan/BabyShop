@@ -1,8 +1,9 @@
 /* Signup.css */
 
 .signup-container {
+  margin-top: 50px;
+  margin-left: 32%;
   max-width: 400px;
-  margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -29,10 +30,11 @@
 
 .input-field {
   width: 100%;
-  padding: 8px;
+  padding: 20px;
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  margin-bottom: 20px;
 }
 
 .error-message {
@@ -54,4 +56,12 @@
 
 .signup-button:hover {
   background-color: #0056b3;
+}
+
+.form {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
 }

@@ -39,7 +39,21 @@ const Header = ({ isLoggedIn, onLogout }) => {
           </li>
           <li>
             {isLoggedIn ? (
+              <Link to="/user-account">Add Product</Link>
+            ) : (
+              ""
+            )}
+          </li>
+          <li>
+            {isLoggedIn ? (
               <button onClick={onLogout}>Logout</button>
+            ) : (
+              <Link to="/signup">Signup</Link>
+            )}
+          </li>
+          <li>
+            {isLoggedIn ? (
+              <button onClick={onLogout}>Signup</button>
             ) : (
               <Link to="/login">Login</Link>
             )}
