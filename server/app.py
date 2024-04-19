@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Product, Category
@@ -10,6 +10,64 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 def index():
     return '<h1>Welcome to Your Flask App</h1>'
 
+cart_items = {}
+
+@app.route('/add-to-cart/<int:itemId>', methods=['POST'])
+def add_to_cart(itemId):
+    data = request.json
+    quantity = data.get('quantity', 1)
+
+    # Check if the item already exists in the cart
+    if itemId in cart_items:
+        # If the item already exists, increment the quantity
+        cart_items[itemId]['quantity'] += quantity
+    else:
+        # If the item doesn't exist, add it to the cart
+        product = Product.query.get(itemId)
+        if product:
+            cart_items[itemId] = {
+                'product': product.serialize(),
+                'quantity': quantity
+            }
+        else:
+            return jsonify({'message': 'Product not found', 'ok': False}), 404
+
+    return jsonify({'message': 'Item added to cart', 'cartItem': cart_items[itemId], 'ok': True}), 200
+
+@app.route('/api/cart/items/count', methods=['GET'])
+def get_cart_item_count():
+    try:
+        # Fetch the cart items from the session
+        cart_items = session.get('cart_items', [])
+        print('Cart items:', cart_items)  # Log the cart items
+
+        # Calculate the total count of items in the cart
+        total_item_count = sum(item['quantity'] for item in cart_items)
+        return jsonify({'count': total_item_count}), 200
+    except Exception as e:
+        print('Error:', e)  # Log the error message
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/remove-from-cart/<int:itemId>', methods=['DELETE'])
+def remove_from_cart(itemId):
+    # Remove the item if it exists, otherwise do nothing
+    cart_items.pop(itemId, None)
+    return jsonify({'message': 'Item removed from cart', 'ok': True}), 200
+
+@app.route('/update-cart/<int:itemId>', methods=['PATCH'])
+def update_cart_item(itemId):
+    data = request.json
+    new_quantity = data.get('quantity')
+
+    if itemId in cart_items:
+        # Update the quantity of the item if it exists in the cart
+        cart_items[itemId]['quantity'] = new_quantity
+        return jsonify({'message': 'Cart item updated', 'updatedItem': cart_items[itemId], 'ok': True}), 200
+    else:
+        # If the item doesn't exist, notify the client but do not treat as an error
+        return jsonify({'message': 'Item not found in cart, no update performed', 'ok': True}), 200 
+
+    
 @app.route('/signup', methods=['POST'])
 def signup():
     try:
@@ -163,33 +221,6 @@ def create_listing():
         return jsonify({'message': 'Listing created successfully', 'listing': new_listing.serialize()}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-# @app.route("/add-to-cart", methods=["POST"])  
-# @jwt_required()
-# def add_to_cart():
-#     try:
-#         username = get_jwt_identity()
-#         user = User.query.filter_by(username=username).first()
-#         if not user:
-#             return jsonify({"message": "Unauthorized for this operation", "ok": False}), 200
-#         data = request.json
-#         product = data["product"]
-#         cart.append(product)
-#         return jsonify({"message": "Added to cart", "ok": True}), 200
-#     except Exception as e:
-#         return jsonify({"message": str(e), "ok": False}), 500
-
-# @app.route("/cart-items", methods=["GET"])  
-# @jwt_required()
-# def cart_items():
-#     try:
-#         username = get_jwt_identity()
-#         user = User.query.filter_by(username=username).first()
-#         if not user:
-#             return jsonify({"message": "Unauthorized for this operation", "ok": False}), 200
-#         return jsonify({"cart": cart, "ok": True}), 200
-#     except Exception as e:
-#         return jsonify({"message": str(e), "ok": False}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

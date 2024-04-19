@@ -1,13 +1,33 @@
 import React from 'react';
+import axios from 'axios';
 
-function ProductCard({ product }) {
-  const addToCart = () => {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const updatedCart = [...cart, product]; // Create a new array with the added product
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    console.log('Product added to cart:', product.name);
+const ProductCard = ({ product }) => {
+  
+  const addToCart = async () => {
+    try {
+      const response = await fetch(`/add-to-cart/${product.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ quantity: 1 }), // Assuming quantity is 1
+      });
+      const data = await response.json();
+      if (data.ok) {
+        console.log('Product added to cart:', product.name);
+  
+        // Add product to local storage
+        const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
+        storedCartItems.push(product);
+        localStorage.setItem('cart', JSON.stringify(storedCartItems));
+      } else {
+        console.error('Error adding product to cart:', data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
-
+  
   return (
     <div className="product-item">
       <img src={product.image_url} alt={product.name} className="product-image" />
@@ -19,6 +39,6 @@ function ProductCard({ product }) {
       )}
     </div>
   );
-}
+};
 
 export default ProductCard;

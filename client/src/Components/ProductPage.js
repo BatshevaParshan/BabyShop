@@ -13,7 +13,7 @@ const ProductPage = () => {
       setProducts(response.data.products || []);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching products:', error); // Log the full error object
+      console.error('Error fetching products:', error);
       setError('Failed to fetch products. Please try again.');
       setLoading(false);
     }
@@ -24,17 +24,24 @@ const ProductPage = () => {
   }, []);
 
   const handleProductAdded = (newProduct) => {
-    setProducts([...products, newProduct]); // Update products state with new product
+    setProducts([...products, newProduct]);
   };
 
   return (
     <div className="product-page-container">
       <h2>Products</h2>
-      <AddProductForm onProductAdded={handleProductAdded} />
+      {/* AddProductForm component should be replaced with your CreateProductForm component */}
+      {/* <AddProductForm onProductAdded={handleProductAdded} /> */}
       <div className="featured-products">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+        {loading ? (
+          <p>Loading products...</p>
+        ) : error ? (
+          <p>{error}</p>
+        ) : (
+          products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))
+        )}
       </div>
     </div>
   );
